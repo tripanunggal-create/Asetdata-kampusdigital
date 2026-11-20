@@ -1,0 +1,2039 @@
+<!DOCTYPE html>
+<html lang="id" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DataKD — Pusat Aset Data</title>
+  <meta name="theme-color" content="#09090B" />
+  <meta name="description" content="DataKD — Pusat Aset Data & Direktori Dokumen Digital" />
+
+  <!-- PWA Manifest via Data URI -->
+  <link rel="manifest" href='data:application/manifest+json;charset=utf-8,%7B%22name%22%3A%22DataKD%20%E2%80%94%20Pusat%20Aset%20Data%22%2C%22short_name%22%3A%22DataKD%22%2C%22start_url%22%3A%22.%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%2309090B%22%2C%22theme_color%22%3A%22%23F97316%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22data%3Aimage%2Fsvg%2Bxml%2C%253Csvg%2520xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%2520viewBox%3D%270%200%20512%20512%27%253E%253Crect%2520width%3D%27512%27%2520height%3D%27512%27%2520rx%3D%27112%27%2520fill%3D%27%23F97316%27%2F%253E%253Cpath%2520d%3D%27M160%20192h192v128H160z%27%2520fill%3D%27none%27%2520stroke%3D%27%23fff%27%2520stroke-width%3D%2732%27%2520rx%3D%2724%27%2F%253E%253C%2Fsvg%253E%22%2C%22sizes%22%3A%22512x512%22%2C%22type%22%3A%22image%2Fsvg%2Bxml%22%7D%5D%7D' />
+
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+          },
+          colors: {
+            dvBlue: {
+              DEFAULT: '#1D4ED8',
+              hover: '#1E40AF',
+              soft: 'rgba(29, 78, 216, 0.14)'
+            },
+            dvOrange: {
+              DEFAULT: '#F97316',
+              dark: '#EA580C',
+              soft: 'rgba(249, 115, 22, 0.14)'
+            }
+          }
+        }
+      }
+    };
+  </script>
+
+  <!-- Phosphor Icons CDN -->
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+  <style>
+    /* Base & iOS Variables */
+    :root {
+      --bg-base: #F5F5F7;
+      --glass-bg: rgba(255, 255, 255, 0.76);
+      --glass-card: rgba(255, 255, 255, 0.85);
+      --glass-border: rgba(0, 0, 0, 0.08);
+      --input-bg: rgba(242, 242, 247, 0.9);
+      --text-primary: #111827;
+      --text-secondary: #6B7280;
+    }
+
+    html.dark {
+      --bg-base: #09090B;
+      --glass-bg: rgba(22, 22, 26, 0.74);
+      --glass-card: rgba(28, 28, 33, 0.78);
+      --glass-border: rgba(255, 255, 255, 0.09);
+      --input-bg: rgba(39, 39, 46, 0.75);
+      --text-primary: #F9FAFB;
+      --text-secondary: #9CA3AF;
+    }
+
+    body {
+      background-color: var(--bg-base);
+      color: var(--text-primary);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      transition: background-color 0.3s ease, color 0.3s ease;
+      overflow-x: hidden;
+    }
+
+    /* Ambient Glow 80-15-5 (Blue Left, Orange Right) */
+    .ambient-glow-left {
+      position: fixed;
+      top: -12%;
+      left: -10%;
+      width: 48vw;
+      height: 48vw;
+      max-width: 680px;
+      max-height: 680px;
+      background: radial-gradient(circle, rgba(29, 78, 216, 0.22) 0%, rgba(29, 78, 216, 0) 70%);
+      filter: blur(60px);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .ambient-glow-right {
+      position: fixed;
+      bottom: -14%;
+      right: -10%;
+      width: 46vw;
+      height: 46vw;
+      max-width: 650px;
+      max-height: 650px;
+      background: radial-gradient(circle, rgba(249, 115, 22, 0.19) 0%, rgba(234, 88, 12, 0) 70%);
+      filter: blur(65px);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    html:not(.dark) .ambient-glow-left {
+      background: radial-gradient(circle, rgba(29, 78, 216, 0.14) 0%, rgba(29, 78, 216, 0) 70%);
+    }
+
+    html:not(.dark) .ambient-glow-right {
+      background: radial-gradient(circle, rgba(249, 115, 22, 0.13) 0%, rgba(234, 88, 12, 0) 70%);
+    }
+
+    /* Frosted Glassmorphism & Squircle */
+    .ios-glass {
+      background: var(--glass-bg);
+      backdrop-filter: blur(22px);
+      -webkit-backdrop-filter: blur(22px);
+      border: 1px solid var(--glass-border);
+    }
+
+    .ios-card {
+      background: var(--glass-card);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border);
+      border-radius: 24px;
+      transition: transform 0.22s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.22s ease, border-color 0.22s ease;
+    }
+
+    .ios-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 14px 32px -10px rgba(0, 0, 0, 0.22);
+    }
+
+    html:not(.dark) .ios-card:hover {
+      box-shadow: 0 14px 30px -10px rgba(15, 23, 42, 0.08);
+    }
+
+    .squircle-icon {
+      border-radius: 16px;
+    }
+
+    .ios-input {
+      background: var(--input-bg);
+      border: 1px solid var(--glass-border);
+      color: var(--text-primary);
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .ios-input:focus {
+      outline: none;
+      border-color: #1D4ED8;
+      box-shadow: 0 0 0 3px rgba(29, 78, 216, 0.2);
+    }
+
+    /* Animations */
+    @keyframes shakeHorizontal {
+      0%, 100% { transform: translateX(0); }
+      18%, 54%, 82% { transform: translateX(-8px); }
+      36%, 68% { transform: translateX(8px); }
+    }
+
+    .animate-shake {
+      animation: shakeHorizontal 0.45s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+    }
+
+    @keyframes unlockPop {
+      0% { transform: scale(1) rotate(0deg); }
+      45% { transform: scale(1.22) rotate(-10deg); }
+      100% { transform: scale(1) rotate(0deg); }
+    }
+
+    .animate-unlock {
+      animation: unlockPop 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+
+    @keyframes fadeSlideUp {
+      from { opacity: 0; transform: translateY(10px) scale(0.985); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .animate-modal-in {
+      animation: fadeSlideUp 0.24s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+
+    /* Hide scrollbar for horizontal pill bar */
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+  </style>
+</head>
+<body class="min-h-screen antialiased selection:bg-dvBlue selection:text-white">
+
+  <!-- Ambient Glows (80-15-5) -->
+  <div class="ambient-glow-left"></div>
+  <div class="ambient-glow-right"></div>
+
+  <!-- Toast Notification Container -->
+  <div id="toast-container" class="fixed bottom-5 right-5 z-[100] flex flex-col gap-2.5 pointer-events-none"></div>
+
+  <!-- ===================================================================== -->
+  <!-- VIEW 1: iOS LOCK SCREEN LOGIN                                         -->
+  <!-- ===================================================================== -->
+  <section id="login-view" class="relative z-10 min-h-screen flex flex-col justify-between p-5 sm:p-8">
+    <!-- Top Bar: Live Clock (Left) & Theme Toggle + Preview Badge (Right) -->
+    <header class="flex items-start justify-between w-full max-w-7xl mx-auto">
+      <div class="select-none">
+        <div id="lock-clock" class="text-3xl sm:text-4xl font-bold tracking-tight tabular-nums">00:00</div>
+        <div id="lock-date" class="text-xs sm:text-sm font-medium text-gray-500 dark:text-gray-400 mt-0.5">Memuat tanggal...</div>
+      </div>
+
+      <div class="flex items-center gap-2.5">
+        <span id="login-preview-badge" class="hidden items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/25 backdrop-blur-md">
+          <span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>
+          Mode Preview
+        </span>
+        <button type="button" onclick="toggleTheme()" aria-label="Ganti Tema Terang/Gelap" class="ios-glass w-10 h-10 rounded-full flex items-center justify-center hover:scale-105 active:scale-95 transition cursor-pointer">
+          <i id="theme-icon-login" class="ph ph-sun text-lg text-amber-400"></i>
+        </button>
+      </div>
+    </header>
+
+    <!-- Center Login Glassmorphism Card -->
+    <main class="w-full max-w-md mx-auto my-auto py-6">
+      <div id="login-card" class="ios-card p-7 sm:p-8 shadow-2xl">
+        <!-- App Brand & Animated Lock Icon -->
+        <div class="flex flex-col items-center text-center mb-6">
+          <div class="relative mb-4">
+            <div id="lock-badge-wrapper" class="w-16 h-16 rounded-[20px] bg-gradient-to-br from-dvOrange to-dvOrange-dark flex items-center justify-center text-white shadow-lg shadow-orange-500/25">
+              <i id="lock-status-icon" class="ph-fill ph-lock-key text-3xl"></i>
+            </div>
+            <div class="absolute -bottom-1.5 -right-1.5 w-7 h-7 rounded-xl bg-dvBlue text-white flex items-center justify-center shadow-md border-2 border-white dark:border-zinc-900">
+              <i class="ph-bold ph-vault text-xs"></i>
+            </div>
+          </div>
+
+          <div class="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-dvOrange mb-1">
+            <span>DataKD</span>
+          </div>
+          <h1 class="text-2xl font-bold tracking-tight">Pusat Aset Data</h1>
+          <p class="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mt-1">
+            Masuk untuk mengakses direktori dokumen & aset tim
+          </p>
+        </div>
+
+        <!-- Error Alert Box -->
+        <div id="login-error" class="hidden mb-4 px-3.5 py-2.5 rounded-2xl bg-red-500/12 border border-red-500/25 text-red-600 dark:text-red-400 text-xs font-medium flex items-center gap-2">
+          <i class="ph-fill ph-warning-circle text-base shrink-0"></i>
+          <span id="login-error-text">Username atau kata sandi salah.</span>
+        </div>
+
+        <!-- Login Form -->
+        <form id="login-form" class="space-y-4">
+          <div>
+            <label for="login-username" class="block text-xs font-semibold text-gray-600 dark:text-gray-300 mb-1.5 ml-1">
+              Username / Email
+            </label>
+            <div class="relative">
+              <i class="ph ph-user absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-lg"></i>
+              <input id="login-username" type="text" required autocomplete="username" placeholder="Masukkan username atau email" class="ios-input w-full pl-10 pr-4 py-3 rounded-2xl text-sm" />
+            </div>
+          </div>
+
+          <div>
+            <label for="login-password" class="block text-xs font-semibold text-gray-600 dark:text-gray-300 mb-1.5 ml-1">
+              Kata Sandi
+            </label>
+            <div class="relative">
+              <i class="ph ph-key absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-lg"></i>
+              <input id="login-password" type="password" required autocomplete="current-password" placeholder="Masukkan kata sandi" class="ios-input w-full pl-10 pr-11 py-3 rounded-2xl text-sm" />
+              <button type="button" onclick="togglePasswordVisibility()" aria-label="Lihat Kata Sandi" class="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition cursor-pointer">
+                <i id="password-eye-icon" class="ph ph-eye text-lg"></i>
+              </button>
+            </div>
+          </div>
+
+          <button id="login-submit-btn" type="submit" class="w-full py-3.5 px-4 rounded-2xl bg-dvBlue hover:bg-dvBlue-hover text-white font-semibold text-sm shadow-lg shadow-blue-700/25 active:scale-[0.99] transition flex items-center justify-center gap-2 cursor-pointer">
+            <span>Masuk ke Dashboard</span>
+            <i class="ph-bold ph-arrow-right text-base"></i>
+          </button>
+        </form>
+
+        <!-- Quick Demo Login Buttons (Only visible when IS_PREVIEW = true) -->
+        <div id="demo-quick-login-box" class="hidden mt-6 pt-5 border-t border-black/10 dark:border-white/10">
+          <p class="text-[11px] font-semibold uppercase tracking-wider text-center text-gray-400 mb-3">
+            Akses Cepat Mode Preview
+          </p>
+          <div class="grid grid-cols-2 gap-2.5">
+            <button type="button" onclick="quickDemoLogin('admin', 'admin123')" class="py-2.5 px-3 rounded-2xl bg-dvOrange/12 hover:bg-dvOrange/20 border border-dvOrange/25 text-dvOrange text-xs font-semibold transition flex items-center justify-center gap-1.5 cursor-pointer">
+              <i class="ph-fill ph-shield-check text-base"></i>
+              <span>Demo Admin</span>
+            </button>
+            <button type="button" onclick="quickDemoLogin('tim', 'tim123')" class="py-2.5 px-3 rounded-2xl bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 border border-black/10 dark:border-white/10 text-xs font-semibold transition flex items-center justify-center gap-1.5 cursor-pointer">
+              <i class="ph-fill ph-users text-base text-dvBlue"></i>
+              <span>Demo Tim (Viewer)</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <footer class="text-center text-xs text-gray-400">
+      DataKD &copy; 2026 &bull; Sistem Manajemen Aset Digital
+    </footer>
+  </section>
+
+  <!-- ===================================================================== -->
+  <!-- VIEW 2: MAIN DASHBOARD                                                -->
+  <!-- ===================================================================== -->
+  <section id="dashboard-view" class="hidden relative z-10 min-h-screen pb-14">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-5 sm:pt-7 space-y-6">
+
+      <!-- TOP HEADER -->
+      <header class="ios-glass rounded-[26px] p-4 sm:p-6 shadow-sm">
+        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+          <!-- Left: Greeting, Role Badge, Date & Title -->
+          <div class="space-y-1.5">
+            <div class="flex flex-wrap items-center gap-2">
+              <div class="flex items-center gap-2">
+                <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-dvOrange to-dvOrange-dark text-white flex items-center justify-center shadow-sm">
+                  <i class="ph-fill ph-vault text-lg"></i>
+                </div>
+                <span class="font-extrabold text-sm tracking-tight text-dvOrange">DataKD</span>
+              </div>
+              <span class="text-gray-300 dark:text-gray-700">&bull;</span>
+              <span class="text-sm font-semibold">Halo, Digi 👋</span>
+              <span id="header-role-badge" class="px-2.5 py-0.5 rounded-full text-[11px] font-bold">
+                Admin
+              </span>
+              <span id="header-preview-badge" class="hidden px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/20">
+                Preview
+              </span>
+            </div>
+
+            <div class="flex flex-wrap items-center gap-2.5 pt-0.5">
+              <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight">DataKD — Pusat Aset Data</h1>
+              <span id="header-total-badge" class="px-3 py-1 rounded-full text-xs font-bold bg-black/5 dark:bg-white/10 text-gray-700 dark:text-gray-200">
+                0 Aset
+              </span>
+            </div>
+
+            <p id="header-today-date" class="text-xs text-gray-500 dark:text-gray-400 flex items-center gap-1.5">
+              <i class="ph ph-calendar-blank"></i>
+              <span>Memuat hari dan tanggal...</span>
+            </p>
+          </div>
+
+          <!-- Right: Action Buttons -->
+          <div class="flex flex-wrap items-center gap-2 sm:gap-2.5">
+            <!-- Admin Only Buttons -->
+            <button id="btn-manage-users" type="button" onclick="openUsersModal()" class="hidden ios-input hover:border-dvOrange/50 px-3.5 py-2.5 rounded-2xl text-xs font-semibold items-center gap-1.5 transition cursor-pointer">
+              <i class="ph-bold ph-users-three text-base text-dvOrange"></i>
+              <span>Akun & Akses</span>
+            </button>
+
+            <button id="btn-backup-restore" type="button" onclick="openBackupModal()" class="hidden ios-input hover:border-dvBlue/50 px-3.5 py-2.5 rounded-2xl text-xs font-semibold items-center gap-1.5 transition cursor-pointer">
+              <i class="ph-bold ph-database text-base text-dvBlue"></i>
+              <span>Backup / Restore</span>
+            </button>
+
+            <button id="btn-add-asset" type="button" onclick="openAssetModal()" class="hidden px-4 py-2.5 rounded-2xl bg-dvBlue hover:bg-dvBlue-hover text-white text-xs font-semibold shadow-md shadow-blue-700/20 active:scale-95 transition items-center gap-1.5 cursor-pointer">
+              <i class="ph-bold ph-plus text-base"></i>
+              <span>+ Tambah Aset</span>
+            </button>
+
+            <!-- Universal Buttons -->
+            <button type="button" onclick="toggleTheme()" aria-label="Ganti Mode Gelap/Terang" class="ios-input w-10 h-10 rounded-2xl flex items-center justify-center hover:scale-105 active:scale-95 transition cursor-pointer">
+              <i id="theme-icon-dash" class="ph ph-sun text-lg text-amber-400"></i>
+            </button>
+
+            <button type="button" onclick="handleLogout()" class="px-3.5 py-2.5 rounded-2xl bg-red-500/10 hover:bg-red-500/20 text-red-600 dark:text-red-400 border border-red-500/20 text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer">
+              <i class="ph-bold ph-sign-out text-base"></i>
+              <span>Keluar</span>
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <!-- SPOTLIGHT SEARCH & FILTERS -->
+      <section class="space-y-3.5">
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-3">
+          <!-- Spotlight Search Bar -->
+          <div class="md:col-span-6 lg:col-span-7 relative">
+            <i class="ph-bold ph-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-lg"></i>
+            <input id="search-input" type="text" placeholder="Spotlight: Cari nama aset, divisi, PIC, atau deskripsi..." class="ios-glass ios-input w-full pl-11 pr-10 py-3.5 rounded-2xl text-sm font-medium shadow-sm" />
+            <button id="clear-search-btn" type="button" onclick="clearSearch()" class="hidden absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 cursor-pointer">
+              <i class="ph-fill ph-x-circle text-lg"></i>
+            </button>
+          </div>
+
+          <!-- Filter Program -->
+          <div class="md:col-span-3 lg:col-span-2.5 relative">
+            <select id="filter-program" class="ios-glass ios-input w-full px-4 py-3.5 rounded-2xl text-sm font-medium appearance-none cursor-pointer pr-9">
+              <option value="Semua">Semua Program</option>
+              <option value="PJJ">Program: PJJ</option>
+              <option value="Reguler">Program: Reguler</option>
+              <option value="Umum">Program: Umum</option>
+            </select>
+            <i class="ph-bold ph-caret-down absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"></i>
+          </div>
+
+          <!-- Filter Status -->
+          <div class="md:col-span-3 lg:col-span-2.5 relative">
+            <select id="filter-status" class="ios-glass ios-input w-full px-4 py-3.5 rounded-2xl text-sm font-medium appearance-none cursor-pointer pr-9">
+              <option value="Semua">Semua Status</option>
+              <option value="Final">Status: Final</option>
+              <option value="Draft">Status: Draft</option>
+              <option value="Revisi">Status: Revisi</option>
+            </select>
+            <i class="ph-bold ph-caret-down absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"></i>
+          </div>
+        </div>
+
+        <!-- Horizontal Division Category Pills (Active = Orange 5% Accent) -->
+        <div id="division-pills" class="flex items-center gap-2 overflow-x-auto no-scrollbar py-1">
+          <!-- Rendered by JS -->
+        </div>
+      </section>
+
+      <!-- 4 SUMMARY STAT CARDS -->
+      <section class="grid grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-4">
+        <div class="ios-card p-4 sm:p-5 flex items-center justify-between">
+          <div>
+            <p class="text-xs font-medium text-gray-500 dark:text-gray-400">Total Aset</p>
+            <p id="stat-total" class="text-2xl sm:text-3xl font-extrabold mt-1 tabular-nums">0</p>
+          </div>
+          <div class="w-12 h-12 squircle-icon bg-dvBlue/15 text-dvBlue flex items-center justify-center">
+            <i class="ph-fill ph-folders text-2xl"></i>
+          </div>
+        </div>
+
+        <div class="ios-card p-4 sm:p-5 flex items-center justify-between">
+          <div>
+            <p class="text-xs font-medium text-gray-500 dark:text-gray-400">Disematkan</p>
+            <p id="stat-pinned" class="text-2xl sm:text-3xl font-extrabold mt-1 tabular-nums">0</p>
+          </div>
+          <div class="w-12 h-12 squircle-icon bg-dvOrange/15 text-dvOrange flex items-center justify-center">
+            <i class="ph-fill ph-push-pin text-2xl"></i>
+          </div>
+        </div>
+
+        <div class="ios-card p-4 sm:p-5 flex items-center justify-between">
+          <div>
+            <p class="text-xs font-medium text-gray-500 dark:text-gray-400">Draft / Proses</p>
+            <p id="stat-draft" class="text-2xl sm:text-3xl font-extrabold mt-1 tabular-nums">0</p>
+          </div>
+          <div class="w-12 h-12 squircle-icon bg-amber-500/15 text-amber-500 flex items-center justify-center">
+            <i class="ph-fill ph-clock-countdown text-2xl"></i>
+          </div>
+        </div>
+
+        <div class="ios-card p-4 sm:p-5 flex items-center justify-between">
+          <div>
+            <p class="text-xs font-medium text-gray-500 dark:text-gray-400">Final / Siap Pakai</p>
+            <p id="stat-final" class="text-2xl sm:text-3xl font-extrabold mt-1 tabular-nums">0</p>
+          </div>
+          <div class="w-12 h-12 squircle-icon bg-emerald-500/15 text-emerald-500 flex items-center justify-center">
+            <i class="ph-fill ph-check-circle text-2xl"></i>
+          </div>
+        </div>
+      </section>
+
+      <!-- COLLECTION HEADER + iOS SEGMENTED CONTROL -->
+      <section class="space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div>
+            <h2 class="text-lg font-bold tracking-tight flex items-center gap-2">
+              <span>Direktori Aset</span>
+              <span id="filtered-count-label" class="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-black/5 dark:bg-white/10 text-gray-500 dark:text-gray-400">
+                0 ditampilkan
+              </span>
+            </h2>
+          </div>
+
+          <!-- iOS Segmented Control (Kotak Grid / List) -->
+          <div class="ios-glass p-1 rounded-2xl inline-flex items-center self-start sm:self-auto">
+            <button id="view-btn-grid" type="button" onclick="setViewMode('grid')" class="px-4 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer">
+              <i class="ph-bold ph-squares-four text-sm"></i>
+              <span>Kotak</span>
+            </button>
+            <button id="view-btn-list" type="button" onclick="setViewMode('list')" class="px-4 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer">
+              <i class="ph-bold ph-list-bullets text-sm"></i>
+              <span>List</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Loading Indicator -->
+        <div id="assets-loading" class="hidden py-16 text-center">
+          <div class="inline-block w-8 h-8 border-4 border-dvBlue/30 border-t-dvBlue rounded-full animate-spin mb-3"></div>
+          <p class="text-sm text-gray-500 dark:text-gray-400">Memuat aset data...</p>
+        </div>
+
+        <!-- Empty State -->
+        <div id="assets-empty" class="hidden ios-card p-12 text-center max-w-lg mx-auto">
+          <div class="w-16 h-16 squircle-icon bg-black/5 dark:bg-white/5 text-gray-400 flex items-center justify-center mx-auto mb-4">
+            <i class="ph ph-folder-open text-3xl"></i>
+          </div>
+          <h3 class="text-base font-bold">Belum ada aset yang sesuai</h3>
+          <p class="text-xs text-gray-500 dark:text-gray-400 mt-1.5 leading-relaxed">
+            Coba ubah kata kunci pencarian atau filter kategori, atau tambahkan aset data baru ke dalam direktori.
+          </p>
+          <button id="empty-add-btn" type="button" onclick="openAssetModal()" class="hidden mt-5 px-4 py-2.5 rounded-2xl bg-dvBlue hover:bg-dvBlue-hover text-white text-xs font-semibold inline-flex items-center gap-1.5 cursor-pointer">
+            <i class="ph-bold ph-plus"></i>
+            <span>Tambah Aset Pertama</span>
+          </button>
+        </div>
+
+        <!-- Assets Grid / List Container -->
+        <div id="assets-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <!-- Rendered dynamically by JS -->
+        </div>
+      </section>
+    </div>
+  </section>
+
+  <!-- ===================================================================== -->
+  <!-- MODAL 1: TAMBAH & EDIT ASET (LANDSCAPE 2-KOLOM TENGAH LAYAR)           -->
+  <!-- ===================================================================== -->
+  <div id="asset-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+    <div class="ios-card animate-modal-in w-full max-w-4xl p-5 sm:p-6 shadow-2xl max-h-[92vh] overflow-y-auto md:overflow-visible">
+      <!-- Modal Header -->
+      <div class="flex items-center justify-between pb-4 mb-4 border-b border-black/10 dark:border-white/10">
+        <div class="flex items-center gap-2.5">
+          <div class="w-9 h-9 rounded-xl bg-dvBlue/15 text-dvBlue flex items-center justify-center">
+            <i id="asset-modal-header-icon" class="ph-bold ph-folder-plus text-lg"></i>
+          </div>
+          <div>
+            <h3 id="asset-modal-title" class="text-base sm:text-lg font-bold leading-tight">Tambah Aset Data Baru</h3>
+            <p class="text-[11px] text-gray-500 dark:text-gray-400">Lengkapi informasi dokumen dan kategori divisi</p>
+          </div>
+        </div>
+        <button type="button" onclick="closeAssetModal()" class="w-8 h-8 rounded-full bg-black/5 dark:bg-white/10 hover:bg-black/10 dark:hover:bg-white/20 flex items-center justify-center transition cursor-pointer">
+          <i class="ph-bold ph-x text-sm"></i>
+        </button>
+      </div>
+
+      <!-- 2-Column Landscape Form -->
+      <form id="asset-form" class="space-y-4">
+        <input type="hidden" id="asset-id" />
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5">
+          <!-- LEFT COLUMN: Name, URL, PIC, Description -->
+          <div class="space-y-3">
+            <div>
+              <label for="asset-title" class="block text-xs font-semibold mb-1">Nama Aset Data <span class="text-red-500">*</span></label>
+              <input id="asset-title" type="text" required placeholder="Contoh: SOP Produksi Video Pembelajaran" class="ios-input w-full px-3.5 py-2.5 rounded-xl text-xs sm:text-sm" />
+            </div>
+
+            <div>
+              <label for="asset-url" class="block text-xs font-semibold mb-1">Link / URL Aset <span class="text-red-500">*</span></label>
+              <input id="asset-url" type="url" required placeholder="https://drive.google.com/..." class="ios-input w-full px-3.5 py-2.5 rounded-xl text-xs sm:text-sm" />
+            </div>
+
+            <div>
+              <label for="asset-pic" class="block text-xs font-semibold mb-1">PIC (Penanggung Jawab) <span class="text-red-500">*</span></label>
+              <input id="asset-pic" type="text" required placeholder="Contoh: Budi Santoso" class="ios-input w-full px-3.5 py-2.5 rounded-xl text-xs sm:text-sm" />
+            </div>
+
+            <div>
+              <label for="asset-description" class="block text-xs font-semibold mb-1">Deskripsi Singkat</label>
+              <textarea id="asset-description" rows="3" placeholder="Ringkasan isi dokumen atau panduan penggunaan aset..." class="ios-input w-full px-3.5 py-2 rounded-xl text-xs sm:text-sm resize-none"></textarea>
+            </div>
+          </div>
+
+          <!-- RIGHT COLUMN: Division, Program, Status, Pin Toggle, 12 Icon & Color Picker -->
+          <div class="space-y-3">
+            <div class="grid grid-cols-3 gap-2">
+              <div>
+                <label for="asset-division" class="block text-[11px] font-semibold mb-1">Divisi</label>
+                <select id="asset-division" class="ios-input w-full px-2.5 py-2.5 rounded-xl text-xs font-medium cursor-pointer">
+                  <option value="Production House">Production House</option>
+                  <option value="ID">ID</option>
+                  <option value="Operasional">Operasional</option>
+                  <option value="PJJ">PJJ</option>
+                  <option value="Reguler">Reguler</option>
+                </select>
+              </div>
+
+              <div>
+                <label for="asset-program" class="block text-[11px] font-semibold mb-1">Program</label>
+                <select id="asset-program" class="ios-input w-full px-2.5 py-2.5 rounded-xl text-xs font-medium cursor-pointer">
+                  <option value="PJJ">PJJ</option>
+                  <option value="Reguler">Reguler</option>
+                  <option value="Umum">Umum</option>
+                </select>
+              </div>
+
+              <div>
+                <label for="asset-status" class="block text-[11px] font-semibold mb-1">Status</label>
+                <select id="asset-status" class="ios-input w-full px-2.5 py-2.5 rounded-xl text-xs font-medium cursor-pointer">
+                  <option value="Final">Final</option>
+                  <option value="Draft">Draft</option>
+                  <option value="Revisi">Revisi</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- iOS Pin Toggle -->
+            <div class="ios-input px-3.5 py-2.5 rounded-xl flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <i class="ph-fill ph-push-pin text-dvOrange text-base"></i>
+                <span class="text-xs font-semibold">Sematkan di Atas (Pin)</span>
+              </div>
+              <label class="relative inline-flex items-center cursor-pointer">
+                <input id="asset-pinned" type="checkbox" class="sr-only peer" />
+                <div class="w-10 h-5 bg-gray-300 dark:bg-zinc-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-5 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-dvOrange"></div>
+              </label>
+            </div>
+
+            <!-- Squircle Color Picker -->
+            <div>
+              <span class="block text-[11px] font-semibold mb-1.5">Warna Squircle</span>
+              <div id="color-picker-grid" class="flex items-center gap-2 flex-wrap">
+                <!-- Rendered by JS -->
+              </div>
+            </div>
+
+            <!-- 12 Icon Picker -->
+            <div>
+              <span class="block text-[11px] font-semibold mb-1.5">Pilih Ikon (12 Pilihan)</span>
+              <div id="icon-picker-grid" class="grid grid-cols-6 gap-1.5">
+                <!-- Rendered by JS -->
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Modal Footer Actions -->
+        <div class="pt-3.5 border-t border-black/10 dark:border-white/10 flex flex-wrap items-center justify-between gap-2">
+          <div>
+            <button id="btn-delete-asset" type="button" onclick="deleteCurrentAsset()" class="hidden px-3.5 py-2 rounded-xl bg-red-500/12 hover:bg-red-500/20 text-red-600 dark:text-red-400 text-xs font-semibold items-center gap-1.5 transition cursor-pointer">
+              <i class="ph-bold ph-trash"></i>
+              <span>Hapus Aset</span>
+            </button>
+          </div>
+
+          <div class="flex items-center gap-2 ml-auto">
+            <button type="button" onclick="closeAssetModal()" class="px-4 py-2 rounded-xl bg-black/5 dark:bg-white/10 hover:bg-black/10 dark:hover:bg-white/15 text-xs font-semibold transition cursor-pointer">
+              Batal
+            </button>
+            <button id="btn-save-asset" type="submit" class="px-5 py-2 rounded-xl bg-dvBlue hover:bg-dvBlue-hover text-white text-xs font-semibold shadow-md shadow-blue-700/20 flex items-center gap-1.5 transition cursor-pointer">
+              <i class="ph-bold ph-check"></i>
+              <span>Simpan Aset</span>
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- MODAL 2: MANAJEMEN AKUN & AKSES TIM (KHUSUS ADMIN)                    -->
+  <!-- ===================================================================== -->
+  <div id="users-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+    <div class="ios-card animate-modal-in w-full max-w-2xl p-5 sm:p-6 shadow-2xl max-h-[90vh] flex flex-col">
+      <!-- Header -->
+      <div class="flex items-center justify-between pb-4 mb-4 border-b border-black/10 dark:border-white/10 shrink-0">
+        <div class="flex items-center gap-2.5">
+          <div class="w-9 h-9 rounded-xl bg-dvOrange/15 text-dvOrange flex items-center justify-center">
+            <i class="ph-bold ph-users-three text-lg"></i>
+          </div>
+          <div>
+            <h3 class="text-base sm:text-lg font-bold leading-tight">Manajemen Akun & Akses Tim</h3>
+            <p class="text-[11px] text-gray-500 dark:text-gray-400">Kelola kredensial login untuk peran Admin & Tim (Viewer)</p>
+          </div>
+        </div>
+        <button type="button" onclick="closeUsersModal()" class="w-8 h-8 rounded-full bg-black/5 dark:bg-white/10 hover:bg-black/10 dark:hover:bg-white/20 flex items-center justify-center transition cursor-pointer">
+          <i class="ph-bold ph-x text-sm"></i>
+        </button>
+      </div>
+
+      <!-- Form Buat Akun Akses Baru (3-Column Grid + Full-Width Blue Button) -->
+      <form id="create-user-form" class="ios-input p-4 rounded-2xl mb-4 shrink-0">
+        <p class="text-xs font-bold mb-3 flex items-center gap-1.5">
+          <i class="ph-fill ph-user-plus text-dvBlue"></i>
+          <span>Buat Akun Akses Baru</span>
+        </p>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 mb-3">
+          <div>
+            <label for="new-username" class="block text-[11px] font-semibold text-gray-500 dark:text-gray-400 mb-1">Username</label>
+            <input id="new-username" type="text" required placeholder="cth: andi.tim" class="ios-input w-full px-3 py-2 rounded-xl text-xs" />
+          </div>
+          <div>
+            <label for="new-password" class="block text-[11px] font-semibold text-gray-500 dark:text-gray-400 mb-1">Kata Sandi</label>
+            <input id="new-password" type="text" required placeholder="Minimal 4 karakter" class="ios-input w-full px-3 py-2 rounded-xl text-xs" />
+          </div>
+          <div>
+            <label for="new-role" class="block text-[11px] font-semibold text-gray-500 dark:text-gray-400 mb-1">Peran Akses</label>
+            <select id="new-role" class="ios-input w-full px-3 py-2 rounded-xl text-xs font-medium cursor-pointer">
+              <option value="viewer">Tim (Viewer)</option>
+              <option value="admin">Admin</option>
+            </select>
+          </div>
+        </div>
+
+        <button type="submit" class="w-full py-2.5 px-4 rounded-xl bg-dvBlue hover:bg-dvBlue-hover text-white text-xs font-semibold shadow-sm flex items-center justify-center gap-1.5 transition cursor-pointer">
+          <i class="ph-bold ph-plus-circle text-sm"></i>
+          <span>Tambah Akun Pengguna</span>
+        </button>
+      </form>
+
+      <!-- Registered Users List -->
+      <div class="flex-1 overflow-y-auto space-y-2 pr-1 min-h-[140px]">
+        <div class="flex items-center justify-between mb-1">
+          <span class="text-xs font-bold text-gray-500 dark:text-gray-400">Daftar Pengguna Terdaftar</span>
+          <span id="users-count-badge" class="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-black/5 dark:bg-white/10">0 Akun</span>
+        </div>
+        <div id="users-list-container" class="space-y-2">
+          <!-- Rendered by JS -->
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div class="pt-4 mt-4 border-t border-black/10 dark:border-white/10 flex items-center justify-between shrink-0">
+        <button id="btn-reset-default-users" type="button" onclick="resetDefaultUsers()" class="px-3.5 py-2 rounded-xl bg-amber-500/12 hover:bg-amber-500/20 text-amber-600 dark:text-amber-400 text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer">
+          <i class="ph-bold ph-arrow-counter-clockwise"></i>
+          <span>Reset ke Akun Default</span>
+        </button>
+        <button type="button" onclick="closeUsersModal()" class="px-4 py-2 rounded-xl bg-black/5 dark:bg-white/10 hover:bg-black/10 dark:hover:bg-white/15 text-xs font-semibold transition cursor-pointer">
+          Tutup
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- MODAL 3: BACKUP & RESTORE JSON (KHUSUS ADMIN)                         -->
+  <!-- ===================================================================== -->
+  <div id="backup-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+    <div class="ios-card animate-modal-in w-full max-w-md p-5 sm:p-6 shadow-2xl">
+      <div class="flex items-center justify-between pb-3.5 mb-4 border-b border-black/10 dark:border-white/10">
+        <div class="flex items-center gap-2.5">
+          <div class="w-9 h-9 rounded-xl bg-dvBlue/15 text-dvBlue flex items-center justify-center">
+            <i class="ph-bold ph-database text-lg"></i>
+          </div>
+          <div>
+            <h3 class="text-base font-bold leading-tight">Backup & Restore Data</h3>
+            <p class="text-[11px] text-gray-500 dark:text-gray-400">Ekspor atau pulihkan seluruh data aset via JSON</p>
+          </div>
+        </div>
+        <button type="button" onclick="closeBackupModal()" class="w-8 h-8 rounded-full bg-black/5 dark:bg-white/10 flex items-center justify-center cursor-pointer">
+          <i class="ph-bold ph-x text-sm"></i>
+        </button>
+      </div>
+
+      <div class="space-y-3">
+        <div class="ios-input p-4 rounded-2xl">
+          <h4 class="text-xs font-bold mb-1">1. Ekspor Cadangan (Backup JSON)</h4>
+          <p class="text-[11px] text-gray-500 dark:text-gray-400 mb-3">
+            Unduh seluruh daftar aset data saat ini ke dalam berkas <code>.json</code>.
+          </p>
+          <button type="button" onclick="exportAssetsJSON()" class="w-full py-2.5 px-4 rounded-xl bg-dvBlue hover:bg-dvBlue-hover text-white text-xs font-semibold flex items-center justify-center gap-1.5 transition cursor-pointer">
+            <i class="ph-bold ph-download-simple text-sm"></i>
+            <span>Unduh File Backup (.JSON)</span>
+          </button>
+        </div>
+
+        <div class="ios-input p-4 rounded-2xl">
+          <h4 class="text-xs font-bold mb-1">2. Pulihkan Data (Restore JSON)</h4>
+          <p class="text-[11px] text-gray-500 dark:text-gray-400 mb-3">
+            Unggah file cadangan <code>.json</code> DataKD untuk memulihkan aset.
+          </p>
+          <label class="w-full py-2.5 px-4 rounded-xl bg-dvOrange/15 hover:bg-dvOrange/25 border border-dvOrange/30 text-dvOrange text-xs font-semibold flex items-center justify-center gap-1.5 transition cursor-pointer">
+            <i class="ph-bold ph-upload-simple text-sm"></i>
+            <span>Pilih File JSON & Pulihkan</span>
+            <input id="restore-file-input" type="file" accept=".json,application/json" onchange="importAssetsJSON(event)" class="hidden" />
+          </label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- MODAL 4: KONFIRMASI AKSI (PENGGANTI ALERT / CONFIRM)                  -->
+  <!-- ===================================================================== -->
+  <div id="confirm-modal" class="hidden fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+    <div class="ios-card animate-modal-in w-full max-w-sm p-5 text-center shadow-2xl">
+      <div class="w-12 h-12 rounded-2xl bg-red-500/15 text-red-500 flex items-center justify-center mx-auto mb-3">
+        <i class="ph-fill ph-warning-circle text-2xl"></i>
+      </div>
+      <h4 id="confirm-title" class="text-base font-bold">Konfirmasi Tindakan</h4>
+      <p id="confirm-message" class="text-xs text-gray-500 dark:text-gray-400 mt-1.5 leading-relaxed">
+        Apakah Anda yakin ingin melanjutkan?
+      </p>
+      <div class="grid grid-cols-2 gap-2.5 mt-5">
+        <button type="button" onclick="closeConfirmModal()" class="py-2.5 px-4 rounded-xl bg-black/5 dark:bg-white/10 hover:bg-black/10 text-xs font-semibold cursor-pointer">
+          Batal
+        </button>
+        <button id="confirm-yes-btn" type="button" class="py-2.5 px-4 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-semibold cursor-pointer">
+          Ya, Lanjutkan
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- APPLICATION LOGIC (ES MODULE + HYBRID SUPABASE + PREVIEW MODE)        -->
+  <!-- ===================================================================== -->
+  <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+
+    // =========================================================================
+    // 1. KONFIGURASI DEPLOYMENT & HYBRID SUPABASE (TERHUBUNG KE DATABASE-KD)
+    // =========================================================================
+    const IS_PREVIEW = false;
+    const SUPABASE_URL = "https://hsjryksgpniikcaixclv.supabase.co";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhzanJ5a3NncG5paWtjYWl4Y2x2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTUxNDg5MzcsImV4cCI6MjExMDcyNDkzN30.O2XuFEruVphh6sEkxfJgvgsGMwSqU20d928Dv3Vt5ZQ";
+
+    let supabase = null;
+    if (!IS_PREVIEW && SUPABASE_URL && SUPABASE_ANON_KEY) {
+      supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    }
+
+    // Dynamic Service Worker Registration via Blob
+    if ('serviceWorker' in navigator) {
+      const swCode = `
+        const CACHE_NAME = 'datakd-v1';
+        self.addEventListener('install', (e) => self.skipWaiting());
+        self.addEventListener('activate', (e) => e.waitUntil(clients.claim()));
+        self.addEventListener('fetch', (e) => {
+          e.respondWith(fetch(e.request).catch(() => new Response('Offline mode')));
+        });
+      `;
+      const swBlob = new Blob([swCode], { type: 'application/javascript' });
+      const swUrl = URL.createObjectURL(swBlob);
+      navigator.serviceWorker.register(swUrl).catch(() => {});
+    }
+
+    // =========================================================================
+    // 2. DATA KONSTANTA, ICON & WARNA SQUIRCLE, DAN DUMMY PREVIEW
+    // =========================================================================
+    const STORAGE_KEYS = {
+      ASSETS: 'datakd_assets',
+      USERS: 'datakd_users',
+      SESSION: 'datakd_session',
+      THEME: 'datakd_theme',
+      VIEW_MODE: 'datakd_view_mode'
+    };
+
+    const DIVISIONS = ['Semua', 'Production House', 'ID', 'Operasional', 'PJJ', 'Reguler'];
+
+    const SQUIRCLE_COLORS = [
+      { id: 'blue', label: 'Biru', bg: 'bg-blue-600/15', text: 'text-blue-600 dark:text-blue-400', swatch: 'bg-blue-600' },
+      { id: 'orange', label: 'Oranye', bg: 'bg-orange-500/15', text: 'text-orange-600 dark:text-orange-400', swatch: 'bg-orange-500' },
+      { id: 'emerald', label: 'Hijau', bg: 'bg-emerald-500/15', text: 'text-emerald-600 dark:text-emerald-400', swatch: 'bg-emerald-500' },
+      { id: 'purple', label: 'Ungu', bg: 'bg-purple-500/15', text: 'text-purple-600 dark:text-purple-400', swatch: 'bg-purple-500' },
+      { id: 'rose', label: 'Merah Muda', bg: 'bg-rose-500/15', text: 'text-rose-600 dark:text-rose-400', swatch: 'bg-rose-500' },
+      { id: 'cyan', label: 'Cyan', bg: 'bg-cyan-500/15', text: 'text-cyan-600 dark:text-cyan-400', swatch: 'bg-cyan-500' }
+    ];
+
+    const ICON_CHOICES = [
+      'ph-folder-open', 'ph-video-camera', 'ph-file-doc', 'ph-presentation-chart',
+      'ph-book-open-text', 'ph-table', 'ph-database', 'ph-film-slate',
+      'ph-graduation-cap', 'ph-gear-six', 'ph-cloud-arrow-up', 'ph-clipboard-text'
+    ];
+
+    const DEFAULT_USERS = [
+      { id: 'u-admin-1', username: 'admin', password: 'admin123', role: 'admin' },
+      { id: 'u-tim-1', username: 'tim', password: 'tim123', role: 'viewer' }
+    ];
+
+    const DEFAULT_PREVIEW_ASSETS = [
+      {
+        id: 'ast-1',
+        title: 'Master Bank Video & Footage Studio 2026',
+        url: 'https://drive.google.com/drive/folders/example-ph-studio',
+        pic: 'Raka Pratama',
+        description: 'Repositori utama rekaman kamera multi-angle, B-roll kampus, aset motion graphics, dan preset color grading.',
+        division: 'Production House',
+        program: 'Umum',
+        status: 'Final',
+        is_pinned: true,
+        icon: 'ph-video-camera',
+        color: 'orange'
+      },
+      {
+        id: 'ast-2',
+        title: 'Template Storyboard & RPS Mata Kuliah PJJ',
+        url: 'https://docs.google.com/document/d/example-id-storyboard',
+        pic: 'Nadia Kusuma',
+        description: 'Panduan penyusunan naskah pembelajaran interaktif, rubrik asesmen, dan standar modul digital PJJ.',
+        division: 'ID',
+        program: 'PJJ',
+        status: 'Final',
+        is_pinned: true,
+        icon: 'ph-book-open-text',
+        color: 'blue'
+      },
+      {
+        id: 'ast-3',
+        title: 'Tracker Jadwal Syuting & Peminjaman Alat Studio',
+        url: 'https://docs.google.com/spreadsheets/d/example-ops-tracker',
+        pic: 'Dimas Saputra',
+        description: 'Logistik harian penggunaan ruang studio, kamera, lighting, serta jadwal kru produksi lintas divisi.',
+        division: 'Operasional',
+        program: 'Umum',
+        status: 'Final',
+        is_pinned: false,
+        icon: 'ph-table',
+        color: 'emerald'
+      },
+      {
+        id: 'ast-4',
+        title: 'Kurikulum & Kalender Akademik Semester Ganjil PJJ',
+        url: 'https://drive.google.com/file/d/example-pjj-kalender',
+        pic: 'Siti Rahmawati',
+        description: 'Dokumen distribusi SKS, jadwal sinkronus LMS, dan milestone unggah materi pembelajaran jarak jauh.',
+        division: 'PJJ',
+        program: 'PJJ',
+        status: 'Revisi',
+        is_pinned: false,
+        icon: 'ph-graduation-cap',
+        color: 'orange'
+      },
+      {
+        id: 'ast-5',
+        title: 'Database Modul Praktikum & Silabus Kelas Reguler',
+        url: 'https://drive.google.com/drive/folders/example-reguler-modul',
+        pic: 'Hendra Wijaya',
+        description: 'Kumpulan diktat perkuliahan tatap muka, lembar kerja laboratorium, dan evaluasi tengah semester.',
+        division: 'Reguler',
+        program: 'Reguler',
+        status: 'Final',
+        is_pinned: false,
+        icon: 'ph-presentation-chart',
+        color: 'blue'
+      },
+      {
+        id: 'ast-6',
+        title: 'Draft SOP Quality Control Audio & Dubbing',
+        url: 'https://docs.google.com/document/d/example-qc-audio',
+        pic: 'Aulia Putri',
+        description: 'Standar tingkat kebisingan (LUFS), format ekspor WAV/MP3, dan alur revisi voice-over sebelum rilis.',
+        division: 'Production House',
+        program: 'PJJ',
+        status: 'Draft',
+        is_pinned: false,
+        icon: 'ph-film-slate',
+        color: 'purple'
+      }
+    ];
+
+    // =========================================================================
+    // 3. STATE APLIKASI
+    // =========================================================================
+    let state = {
+      currentUser: null, // { username, role: 'admin' | 'viewer' }
+      assets: [],
+      users: [],
+      selectedDivision: 'Semua',
+      searchQuery: '',
+      filterProgram: 'Semua',
+      filterStatus: 'Semua',
+      viewMode: localStorage.getItem(STORAGE_KEYS.VIEW_MODE) || 'grid',
+      selectedColor: 'blue',
+      selectedIcon: 'ph-folder-open',
+      confirmCallback: null
+    };
+
+    // =========================================================================
+    // 4. INISIALISASI TEMA, JAM LIVE, DAN SESI
+    // =========================================================================
+    function initTheme() {
+      const savedTheme = localStorage.getItem(STORAGE_KEYS.THEME);
+      const isDark = savedTheme ? savedTheme === 'dark' : true;
+      document.documentElement.classList.toggle('dark', isDark);
+      updateThemeIcons(isDark);
+    }
+
+    function updateThemeIcons(isDark) {
+      const iconClass = isDark ? 'ph ph-sun text-lg text-amber-400' : 'ph ph-moon text-lg text-slate-700';
+      const el1 = document.getElementById('theme-icon-login');
+      const el2 = document.getElementById('theme-icon-dash');
+      if (el1) el1.className = iconClass;
+      if (el2) el2.className = iconClass;
+    }
+
+    window.toggleTheme = function () {
+      const isDark = !document.documentElement.classList.contains('dark');
+      document.documentElement.classList.toggle('dark', isDark);
+      localStorage.setItem(STORAGE_KEYS.THEME, isDark ? 'dark' : 'light');
+      updateThemeIcons(isDark);
+    };
+
+    function startLiveClock() {
+      const update = () => {
+        const now = new Date();
+        const timeStr = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }).replace('.', ':');
+        const dateStr = now.toLocaleDateString('id-ID', {
+          weekday: 'long',
+          day: 'numeric',
+          month: 'long',
+          year: 'numeric'
+        });
+        const lockClock = document.getElementById('lock-clock');
+        const lockDate = document.getElementById('lock-date');
+        const headerDate = document.getElementById('header-today-date');
+        if (lockClock) lockClock.textContent = timeStr;
+        if (lockDate) lockDate.textContent = dateStr;
+        if (headerDate) headerDate.querySelector('span').textContent = dateStr;
+      };
+      update();
+      setInterval(update, 1000);
+    }
+
+    // Seed localStorage jika IS_PREVIEW = true
+    function ensurePreviewStorage() {
+      if (!IS_PREVIEW) return;
+      if (!localStorage.getItem(STORAGE_KEYS.ASSETS)) {
+        localStorage.setItem(STORAGE_KEYS.ASSETS, JSON.stringify(DEFAULT_PREVIEW_ASSETS));
+      }
+      if (!localStorage.getItem(STORAGE_KEYS.USERS)) {
+        localStorage.setItem(STORAGE_KEYS.USERS, JSON.stringify(DEFAULT_USERS));
+      }
+    }
+
+    async function bootstrapApp() {
+      initTheme();
+      startLiveClock();
+      ensurePreviewStorage();
+
+      // Configure Preview UI elements strictly based on IS_PREVIEW
+      if (IS_PREVIEW) {
+        document.getElementById('login-preview-badge').classList.replace('hidden', 'inline-flex');
+        document.getElementById('demo-quick-login-box').classList.remove('hidden');
+        document.getElementById('header-preview-badge').classList.remove('hidden');
+        document.getElementById('btn-reset-default-users').classList.remove('hidden');
+      } else {
+        document.getElementById('login-preview-badge').classList.add('hidden');
+        document.getElementById('demo-quick-login-box').classList.add('hidden');
+        document.getElementById('header-preview-badge').classList.add('hidden');
+        document.getElementById('btn-reset-default-users').classList.add('hidden');
+      }
+
+      // Check existing session in sessionStorage or Supabase Auth
+      const savedSession = sessionStorage.getItem(STORAGE_KEYS.SESSION);
+      if (savedSession) {
+        try {
+          state.currentUser = JSON.parse(savedSession);
+          await enterDashboard();
+          return;
+        } catch {
+          sessionStorage.removeItem(STORAGE_KEYS.SESSION);
+        }
+      } else if (!IS_PREVIEW && supabase) {
+        const { data } = await supabase.auth.getSession();
+        if (data?.session?.user) {
+          state.currentUser = {
+            username: data.session.user.email || 'Admin',
+            role: 'admin'
+          };
+          sessionStorage.setItem(STORAGE_KEYS.SESSION, JSON.stringify(state.currentUser));
+          await enterDashboard();
+          return;
+        }
+      }
+
+      showLoginView();
+    }
+
+    // =========================================================================
+    // 5. AUTENTIKASI & LOCK SCREEN HANDLERS
+    // =========================================================================
+    function showLoginView() {
+      document.getElementById('login-view').classList.remove('hidden');
+      document.getElementById('dashboard-view').classList.add('hidden');
+      const lockIcon = document.getElementById('lock-status-icon');
+      lockIcon.className = 'ph-fill ph-lock-key text-3xl';
+      lockIcon.classList.remove('animate-unlock');
+    }
+
+    window.togglePasswordVisibility = function () {
+      const input = document.getElementById('login-password');
+      const icon = document.getElementById('password-eye-icon');
+      if (input.type === 'password') {
+        input.type = 'text';
+        icon.className = 'ph ph-eye-slash text-lg';
+      } else {
+        input.type = 'password';
+        icon.className = 'ph ph-eye text-lg';
+      }
+    };
+
+    window.quickDemoLogin = function (username, password) {
+      if (!IS_PREVIEW) return;
+      document.getElementById('login-username').value = username;
+      document.getElementById('login-password').value = password;
+      document.getElementById('login-form').dispatchEvent(new Event('submit'));
+    };
+
+    function triggerLoginError(message) {
+      const card = document.getElementById('login-card');
+      const errBox = document.getElementById('login-error');
+      const errText = document.getElementById('login-error-text');
+      errText.textContent = message;
+      errBox.classList.remove('hidden');
+
+      card.classList.remove('animate-shake');
+      void card.offsetWidth; // trigger reflow
+      card.classList.add('animate-shake');
+    }
+
+    document.getElementById('login-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const usernameInput = document.getElementById('login-username').value.trim();
+      const passwordInput = document.getElementById('login-password').value;
+      const submitBtn = document.getElementById('login-submit-btn');
+      document.getElementById('login-error').classList.add('hidden');
+
+      if (!usernameInput || !passwordInput) {
+        triggerLoginError('Harap isi username/email dan kata sandi.');
+        return;
+      }
+
+      submitBtn.disabled = true;
+      submitBtn.classList.add('opacity-75');
+
+      try {
+        let authenticatedUser = null;
+
+        if (IS_PREVIEW) {
+          // Mode Preview: cek localStorage users
+          const users = JSON.parse(localStorage.getItem(STORAGE_KEYS.USERS) || '[]');
+          const found = users.find(
+            (u) => u.username.toLowerCase() === usernameInput.toLowerCase() && u.password === passwordInput
+          );
+          if (found) {
+            authenticatedUser = { username: found.username, role: found.role };
+          }
+        } else {
+          // Mode Produksi Supabase
+          if (!supabase) {
+            throw new Error('Konfigurasi SUPABASE_URL dan SUPABASE_ANON_KEY belum diisi.');
+          }
+
+          // 1. Jika format email, coba Supabase Auth (Admin)
+          if (usernameInput.includes('@')) {
+            const { data, error } = await supabase.auth.signInWithPassword({
+              email: usernameInput,
+              password: passwordInput
+            });
+            if (!error && data?.user) {
+              authenticatedUser = { username: data.user.email, role: 'admin' };
+            }
+          }
+
+          // 2. Jika belum berhasil, cek tabel dv_users di Supabase (Tim / Viewer atau Admin terdaftar)
+          if (!authenticatedUser) {
+            const { data: userRows, error: dbErr } = await supabase
+              .from('dv_users')
+              .select('*')
+              .eq('username', usernameInput)
+              .eq('password', passwordInput)
+              .limit(1);
+
+            if (!dbErr && userRows && userRows.length > 0) {
+              authenticatedUser = {
+                username: userRows[0].username,
+                role: userRows[0].role || 'viewer'
+              };
+            }
+          }
+        }
+
+        if (!authenticatedUser) {
+          triggerLoginError('Username/email atau kata sandi tidak valid.');
+          submitBtn.disabled = false;
+          submitBtn.classList.remove('opacity-75');
+          return;
+        }
+
+        // Animasi gembok terbuka sebelum masuk dashboard
+        const lockIcon = document.getElementById('lock-status-icon');
+        lockIcon.className = 'ph-fill ph-lock-key-open text-3xl animate-unlock';
+        sessionStorage.setItem(STORAGE_KEYS.SESSION, JSON.stringify(authenticatedUser));
+        state.currentUser = authenticatedUser;
+
+        setTimeout(async () => {
+          submitBtn.disabled = false;
+          submitBtn.classList.remove('opacity-75');
+          await enterDashboard();
+        }, 520);
+      } catch (err) {
+        triggerLoginError(err.message || 'Gagal melakukan autentikasi.');
+        submitBtn.disabled = false;
+        submitBtn.classList.remove('opacity-75');
+      }
+    });
+
+    window.handleLogout = async function () {
+      sessionStorage.removeItem(STORAGE_KEYS.SESSION);
+      state.currentUser = null;
+      if (!IS_PREVIEW && supabase) {
+        await supabase.auth.signOut().catch(() => {});
+      }
+      document.getElementById('login-password').value = '';
+      showLoginView();
+      showToast('Berhasil keluar dari sesi DataKD.', 'info');
+    };
+
+    // =========================================================================
+    // 6. ENTER DASHBOARD & DATA FETCHING (CRUD SUPABASE / LOCALSTORAGE)
+    // =========================================================================
+    async function enterDashboard() {
+      document.getElementById('login-view').classList.add('hidden');
+      document.getElementById('dashboard-view').classList.remove('hidden');
+
+      const isAdmin = state.currentUser?.role === 'admin';
+      const roleBadge = document.getElementById('header-role-badge');
+
+      if (isAdmin) {
+        // 5% Orange accent for Admin badge
+        roleBadge.textContent = 'Admin';
+        roleBadge.className = 'px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-dvOrange/15 text-dvOrange border border-dvOrange/30';
+        document.getElementById('btn-manage-users').classList.replace('hidden', 'inline-flex');
+        document.getElementById('btn-backup-restore').classList.replace('hidden', 'inline-flex');
+        document.getElementById('btn-add-asset').classList.replace('hidden', 'inline-flex');
+      } else {
+        roleBadge.textContent = 'Tim';
+        roleBadge.className = 'px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-dvBlue/15 text-dvBlue border border-dvBlue/30';
+        document.getElementById('btn-manage-users').classList.add('hidden');
+        document.getElementById('btn-backup-restore').classList.add('hidden');
+        document.getElementById('btn-add-asset').classList.add('hidden');
+      }
+
+      renderDivisionPills();
+      updateSegmentedControlUI();
+      await fetchAssets();
+      if (isAdmin) {
+        await fetchUsers();
+      }
+    }
+
+    async function fetchAssets() {
+      const loadingEl = document.getElementById('assets-loading');
+      const containerEl = document.getElementById('assets-container');
+      loadingEl.classList.remove('hidden');
+      containerEl.classList.add('hidden');
+
+      try {
+        if (IS_PREVIEW) {
+          state.assets = JSON.parse(localStorage.getItem(STORAGE_KEYS.ASSETS) || '[]');
+        } else if (supabase) {
+          const { data, error } = await supabase
+            .from('dv_assets')
+            .select('*')
+            .order('is_pinned', { ascending: false })
+            .order('created_at', { ascending: false });
+          if (error) throw error;
+          state.assets = data || [];
+        } else {
+          state.assets = [];
+        }
+      } catch (err) {
+        showToast('Gagal memuat data aset: ' + err.message, 'error');
+        state.assets = [];
+      } finally {
+        loadingEl.classList.add('hidden');
+        containerEl.classList.remove('hidden');
+        renderDashboard();
+      }
+    }
+
+    async function fetchUsers() {
+      try {
+        if (IS_PREVIEW) {
+          state.users = JSON.parse(localStorage.getItem(STORAGE_KEYS.USERS) || '[]');
+        } else if (supabase) {
+          const { data, error } = await supabase
+            .from('dv_users')
+            .select('*')
+            .order('created_at', { ascending: true });
+          if (error) throw error;
+          state.users = data || [];
+        }
+      } catch (err) {
+        showToast('Gagal memuat daftar akun: ' + err.message, 'error');
+      }
+    }
+
+    // =========================================================================
+    // 7. FILTERING, STATS & RENDERING CARDS (KOTAK GRID & LIST)
+    // =========================================================================
+    function renderDivisionPills() {
+      const container = document.getElementById('division-pills');
+      container.innerHTML = DIVISIONS.map((div) => {
+        const isActive = state.selectedDivision === div;
+        // 5% Orange accent for active division pill
+        const cls = isActive
+          ? 'bg-dvOrange text-white shadow-md shadow-orange-500/25 border-dvOrange'
+          : 'ios-glass hover:border-dvOrange/40 text-gray-700 dark:text-gray-300';
+        return `
+          <button type="button" onclick="selectDivision('${div}')" class="px-4 py-2 rounded-full text-xs font-semibold border whitespace-nowrap transition active:scale-95 cursor-pointer ${cls}">
+            ${div}
+          </button>
+        `;
+      }).join('');
+    }
+
+    window.selectDivision = function (div) {
+      state.selectedDivision = div;
+      renderDivisionPills();
+      renderDashboard();
+    };
+
+    window.setViewMode = function (mode) {
+      state.viewMode = mode;
+      localStorage.setItem(STORAGE_KEYS.VIEW_MODE, mode);
+      updateSegmentedControlUI();
+      renderDashboard();
+    };
+
+    function updateSegmentedControlUI() {
+      const btnGrid = document.getElementById('view-btn-grid');
+      const btnList = document.getElementById('view-btn-list');
+      const activeCls = 'bg-white dark:bg-zinc-800 text-gray-900 dark:text-white shadow-sm';
+      const inactiveCls = 'text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200';
+
+      if (state.viewMode === 'grid') {
+        btnGrid.className = `px-4 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer ${activeCls}`;
+        btnList.className = `px-4 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer ${inactiveCls}`;
+      } else {
+        btnList.className = `px-4 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer ${activeCls}`;
+        btnGrid.className = `px-4 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer ${inactiveCls}`;
+      }
+    }
+
+    function getFilteredAssets() {
+      const q = state.searchQuery.toLowerCase().trim();
+      return state.assets
+        .filter((item) => {
+          const matchDiv = state.selectedDivision === 'Semua' || item.division === state.selectedDivision;
+          const matchProg = state.filterProgram === 'Semua' || item.program === state.filterProgram;
+          const matchStat = state.filterStatus === 'Semua' || item.status === state.filterStatus;
+          const matchQuery =
+            !q ||
+            (item.title && item.title.toLowerCase().includes(q)) ||
+            (item.division && item.division.toLowerCase().includes(q)) ||
+            (item.pic && item.pic.toLowerCase().includes(q)) ||
+            (item.description && item.description.toLowerCase().includes(q));
+          return matchDiv && matchProg && matchStat && matchQuery;
+        })
+        .sort((a, b) => Number(Boolean(b.is_pinned)) - Number(Boolean(a.is_pinned)));
+    }
+
+    function updateStats() {
+      const total = state.assets.length;
+      const pinned = state.assets.filter((a) => a.is_pinned).length;
+      const draftOrProcess = state.assets.filter((a) => a.status === 'Draft' || a.status === 'Revisi').length;
+      const finalReady = state.assets.filter((a) => a.status === 'Final').length;
+
+      document.getElementById('stat-total').textContent = total;
+      document.getElementById('stat-pinned').textContent = pinned;
+      document.getElementById('stat-draft').textContent = draftOrProcess;
+      document.getElementById('stat-final').textContent = finalReady;
+      document.getElementById('header-total-badge').textContent = `${total} Aset`;
+    }
+
+    function getProgramBadgeHTML(program) {
+      if (program === 'PJJ') {
+        // 5% Orange accent
+        return `<span class="px-2.5 py-0.5 rounded-lg text-[11px] font-bold bg-dvOrange/15 text-dvOrange">PJJ</span>`;
+      }
+      if (program === 'Reguler') {
+        // 15% Blue accent
+        return `<span class="px-2.5 py-0.5 rounded-lg text-[11px] font-bold bg-dvBlue/15 text-dvBlue dark:text-blue-400">Reguler</span>`;
+      }
+      return `<span class="px-2.5 py-0.5 rounded-lg text-[11px] font-semibold bg-black/5 dark:bg-white/10 text-gray-600 dark:text-gray-300">Umum</span>`;
+    }
+
+    function getStatusBadgeHTML(status) {
+      if (status === 'Final') {
+        return `<span class="px-2.5 py-0.5 rounded-lg text-[11px] font-semibold bg-emerald-500/15 text-emerald-600 dark:text-emerald-400">Final</span>`;
+      }
+      if (status === 'Revisi') {
+        return `<span class="px-2.5 py-0.5 rounded-lg text-[11px] font-semibold bg-rose-500/15 text-rose-600 dark:text-rose-400">Revisi</span>`;
+      }
+      return `<span class="px-2.5 py-0.5 rounded-lg text-[11px] font-semibold bg-amber-500/15 text-amber-600 dark:text-amber-400">Draft</span>`;
+    }
+
+    function getSquircleStyle(colorId) {
+      return SQUIRCLE_COLORS.find((c) => c.id === colorId) || SQUIRCLE_COLORS[0];
+    }
+
+    function escapeHTML(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    function renderDashboard() {
+      updateStats();
+      const filtered = getFilteredAssets();
+      const container = document.getElementById('assets-container');
+      const emptyEl = document.getElementById('assets-empty');
+      const isAdmin = state.currentUser?.role === 'admin';
+
+      document.getElementById('filtered-count-label').textContent = `${filtered.length} ditampilkan`;
+
+      if (filtered.length === 0) {
+        container.innerHTML = '';
+        emptyEl.classList.remove('hidden');
+        const emptyAddBtn = document.getElementById('empty-add-btn');
+        if (isAdmin) emptyAddBtn.classList.remove('hidden');
+        else emptyAddBtn.classList.add('hidden');
+        return;
+      }
+
+      emptyEl.classList.add('hidden');
+
+      if (state.viewMode === 'grid') {
+        // MODE KOTAK (3 COLUMNS DESKTOP)
+        container.className = 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4';
+        container.innerHTML = filtered
+          .map((item) => {
+            const sq = getSquircleStyle(item.color);
+            const safeTitle = escapeHTML(item.title);
+            const safeDesc = escapeHTML(item.description || 'Tidak ada deskripsi tambahan.');
+            const safePic = escapeHTML(item.pic);
+            const safeDiv = escapeHTML(item.division);
+            const safeUrl = escapeHTML(item.url);
+
+            return `
+              <article title="${safeDesc}" class="ios-card p-5 flex flex-col justify-between group relative">
+                <div>
+                  <!-- Top Row: Squircle Icon + Quick Action Buttons -->
+                  <div class="flex items-start justify-between gap-3 mb-4">
+                    <div class="w-12 h-12 squircle-icon ${sq.bg} ${sq.text} flex items-center justify-center shrink-0">
+                      <i class="ph-fill ${escapeHTML(item.icon || 'ph-folder-open')} text-2xl"></i>
+                    </div>
+
+                    <div class="flex items-center gap-1">
+                      ${
+                        isAdmin
+                          ? `<button type="button" onclick="togglePinAsset('${item.id}')" title="${item.is_pinned ? 'Lepas Sematan' : 'Sematkan di Atas'}" class="w-8 h-8 rounded-xl flex items-center justify-center transition cursor-pointer ${
+                              item.is_pinned
+                                ? 'bg-dvOrange/15 text-dvOrange'
+                                : 'bg-black/5 dark:bg-white/5 text-gray-400 hover:text-dvOrange'
+                            }">
+                              <i class="${item.is_pinned ? 'ph-fill' : 'ph-bold'} ph-push-pin text-sm"></i>
+                            </button>`
+                          : item.is_pinned
+                          ? `<span title="Disematkan" class="w-8 h-8 rounded-xl bg-dvOrange/15 text-dvOrange flex items-center justify-center">
+                              <i class="ph-fill ph-push-pin text-sm"></i>
+                            </span>`
+                          : ''
+                      }
+
+                      <button type="button" onclick="copyAssetLink('${safeUrl}')" title="Salin Link Aset" class="w-8 h-8 rounded-xl bg-black/5 dark:bg-white/5 hover:bg-dvBlue/15 text-gray-500 dark:text-gray-300 hover:text-dvBlue flex items-center justify-center transition cursor-pointer">
+                        <i class="ph-bold ph-link text-sm"></i>
+                      </button>
+
+                      ${
+                        isAdmin
+                          ? `<button type="button" onclick="openAssetModal('${item.id}')" title="Edit Aset" class="w-8 h-8 rounded-xl bg-black/5 dark:bg-white/5 hover:bg-dvOrange/15 text-gray-500 dark:text-gray-300 hover:text-dvOrange flex items-center justify-center transition cursor-pointer">
+                              <i class="ph-bold ph-pencil-simple text-sm"></i>
+                            </button>`
+                          : ''
+                      }
+                    </div>
+                  </div>
+
+                  <!-- Badges: Division + Program + Status -->
+                  <div class="flex flex-wrap items-center gap-1.5 mb-2.5">
+                    <span class="px-2.5 py-0.5 rounded-lg text-[11px] font-semibold bg-black/5 dark:bg-white/10 text-gray-700 dark:text-gray-200">
+                      ${safeDiv}
+                    </span>
+                    ${getProgramBadgeHTML(item.program)}
+                    ${getStatusBadgeHTML(item.status)}
+                  </div>
+
+                  <!-- 1-Line Truncated Title (Description hidden on card, shown on hover tooltip) -->
+                  <h3 class="text-base font-bold truncate group-hover:text-dvBlue dark:group-hover:text-blue-400 transition">
+                    ${safeTitle}
+                  </h3>
+                </div>
+
+                <!-- Bottom Row: PIC Info + Open Asset Button -->
+                <div class="pt-4 mt-4 border-t border-black/8 dark:border-white/8 flex items-center justify-between gap-2">
+                  <div class="flex items-center gap-1.5 text-xs text-gray-500 dark:text-gray-400 min-w-0">
+                    <i class="ph-fill ph-user-circle text-base shrink-0"></i>
+                    <span class="truncate font-medium">${safePic}</span>
+                  </div>
+
+                  <a href="${safeUrl}" target="_blank" rel="noopener noreferrer" class="px-3.5 py-2 rounded-xl bg-dvBlue hover:bg-dvBlue-hover text-white text-xs font-semibold shadow-sm shadow-blue-700/20 inline-flex items-center gap-1 shrink-0 transition active:scale-95">
+                    <span>Buka Aset ↗</span>
+                  </a>
+                </div>
+              </article>
+            `;
+          })
+          .join('');
+      } else {
+        // MODE LIST (VERTICAL ROWS)
+        container.className = 'flex flex-col gap-3';
+        container.innerHTML = filtered
+          .map((item) => {
+            const sq = getSquircleStyle(item.color);
+            const safeTitle = escapeHTML(item.title);
+            const safeDesc = escapeHTML(item.description || 'Tidak ada deskripsi singkat.');
+            const safePic = escapeHTML(item.pic);
+            const safeDiv = escapeHTML(item.division);
+            const safeUrl = escapeHTML(item.url);
+
+            return `
+              <article class="ios-card p-4 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                <div class="flex items-center gap-3.5 min-w-0 flex-1">
+                  <div class="w-11 h-11 squircle-icon ${sq.bg} ${sq.text} flex items-center justify-center shrink-0">
+                    <i class="ph-fill ${escapeHTML(item.icon || 'ph-folder-open')} text-xl"></i>
+                  </div>
+
+                  <div class="min-w-0 flex-1">
+                    <div class="flex items-center gap-2">
+                      ${
+                        item.is_pinned
+                          ? `<i class="ph-fill ph-push-pin text-dvOrange text-xs shrink-0" title="Disematkan"></i>`
+                          : ''
+                      }
+                      <h3 class="text-sm sm:text-base font-bold truncate">${safeTitle}</h3>
+                    </div>
+                    <p class="text-xs text-gray-500 dark:text-gray-400 truncate mt-0.5">${safeDesc}</p>
+                  </div>
+                </div>
+
+                <div class="flex flex-wrap items-center justify-between lg:justify-end gap-2.5 shrink-0">
+                  <div class="flex flex-wrap items-center gap-1.5">
+                    <span class="px-2.5 py-0.5 rounded-lg text-[11px] font-semibold bg-black/5 dark:bg-white/10 text-gray-700 dark:text-gray-200">
+                      ${safeDiv}
+                    </span>
+                    ${getProgramBadgeHTML(item.program)}
+                    ${getStatusBadgeHTML(item.status)}
+                    <span class="px-2.5 py-0.5 rounded-lg text-[11px] font-medium text-gray-500 dark:text-gray-400 inline-flex items-center gap-1">
+                      <i class="ph-fill ph-user"></i>
+                      ${safePic}
+                    </span>
+                  </div>
+
+                  <div class="flex items-center gap-1.5">
+                    <button type="button" onclick="copyAssetLink('${safeUrl}')" title="Salin Link" class="px-3 py-2 rounded-xl bg-black/5 dark:bg-white/5 hover:bg-dvBlue/15 text-xs font-semibold text-gray-600 dark:text-gray-300 hover:text-dvBlue flex items-center gap-1 transition cursor-pointer">
+                      <i class="ph-bold ph-link"></i>
+                      <span>Salin</span>
+                    </button>
+
+                    ${
+                      isAdmin
+                        ? `<button type="button" onclick="openAssetModal('${item.id}')" title="Edit Aset" class="px-3 py-2 rounded-xl bg-black/5 dark:bg-white/5 hover:bg-dvOrange/15 text-xs font-semibold text-gray-600 dark:text-gray-300 hover:text-dvOrange flex items-center gap-1 transition cursor-pointer">
+                            <i class="ph-bold ph-pencil-simple"></i>
+                            <span>Edit</span>
+                          </button>`
+                        : ''
+                    }
+
+                    <a href="${safeUrl}" target="_blank" rel="noopener noreferrer" class="px-3.5 py-2 rounded-xl bg-dvBlue hover:bg-dvBlue-hover text-white text-xs font-semibold shadow-sm inline-flex items-center gap-1 transition">
+                      <span>Buka Aset ↗</span>
+                    </a>
+                  </div>
+                </div>
+              </article>
+            `;
+          })
+          .join('');
+      }
+    }
+
+    // Search & Filter Listeners
+    document.getElementById('search-input').addEventListener('input', (e) => {
+      state.searchQuery = e.target.value;
+      document.getElementById('clear-search-btn').classList.toggle('hidden', !state.searchQuery);
+      renderDashboard();
+    });
+
+    window.clearSearch = function () {
+      state.searchQuery = '';
+      document.getElementById('search-input').value = '';
+      document.getElementById('clear-search-btn').classList.add('hidden');
+      renderDashboard();
+    };
+
+    document.getElementById('filter-program').addEventListener('change', (e) => {
+      state.filterProgram = e.target.value;
+      renderDashboard();
+    });
+
+    document.getElementById('filter-status').addEventListener('change', (e) => {
+      state.filterStatus = e.target.value;
+      renderDashboard();
+    });
+
+    // Clipboard Copy using fallback execCommand for iframe safety
+    window.copyAssetLink = function (url) {
+      const tempInput = document.createElement('input');
+      tempInput.value = url;
+      document.body.appendChild(tempInput);
+      tempInput.select();
+      try {
+        document.execCommand('copy');
+        showToast('Tautan aset berhasil disalin ke clipboard!', 'success');
+      } catch {
+        showToast('Gagal menyalin tautan.', 'error');
+      }
+      document.body.removeChild(tempInput);
+    };
+
+    // =========================================================================
+    // 8. MODAL TAMBAH & EDIT ASET (CRUD)
+    // =========================================================================
+    function renderColorAndIconPickers() {
+      const colorGrid = document.getElementById('color-picker-grid');
+      colorGrid.innerHTML = SQUIRCLE_COLORS.map((c) => {
+        const isSelected = state.selectedColor === c.id;
+        return `
+          <button type="button" onclick="selectSquircleColor('${c.id}')" title="${c.label}" class="w-7 h-7 rounded-full ${c.swatch} flex items-center justify-center text-white transition transform hover:scale-110 cursor-pointer ${
+            isSelected ? 'ring-2 ring-offset-2 ring-dvBlue dark:ring-offset-zinc-900 scale-110' : 'opacity-75'
+          }">
+            ${isSelected ? '<i class="ph-bold ph-check text-xs"></i>' : ''}
+          </button>
+        `;
+      }).join('');
+
+      const iconGrid = document.getElementById('icon-picker-grid');
+      const activeSq = getSquircleStyle(state.selectedColor);
+      iconGrid.innerHTML = ICON_CHOICES.map((ic) => {
+        const isSelected = state.selectedIcon === ic;
+        return `
+          <button type="button" onclick="selectSquircleIcon('${ic}')" class="h-9 rounded-xl flex items-center justify-center border transition cursor-pointer ${
+            isSelected
+              ? `${activeSq.bg} ${activeSq.text} border-current font-bold`
+              : 'ios-input text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+          }">
+            <i class="ph-fill ${ic} text-base"></i>
+          </button>
+        `;
+      }).join('');
+    }
+
+    window.selectSquircleColor = function (colorId) {
+      state.selectedColor = colorId;
+      renderColorAndIconPickers();
+    };
+
+    window.selectSquircleIcon = function (iconClass) {
+      state.selectedIcon = iconClass;
+      renderColorAndIconPickers();
+    };
+
+    window.openAssetModal = function (assetId = null) {
+      if (state.currentUser?.role !== 'admin') return;
+      const modal = document.getElementById('asset-modal');
+      const deleteBtn = document.getElementById('btn-delete-asset');
+
+      if (assetId) {
+        const asset = state.assets.find((a) => String(a.id) === String(assetId));
+        if (!asset) return;
+        document.getElementById('asset-modal-title').textContent = 'Edit Aset Data';
+        document.getElementById('asset-modal-header-icon').className = 'ph-bold ph-pencil-simple text-lg';
+        document.getElementById('asset-id').value = asset.id;
+        document.getElementById('asset-title').value = asset.title;
+        document.getElementById('asset-url').value = asset.url;
+        document.getElementById('asset-pic').value = asset.pic;
+        document.getElementById('asset-description').value = asset.description || '';
+        document.getElementById('asset-division').value = asset.division;
+        document.getElementById('asset-program').value = asset.program;
+        document.getElementById('asset-status').value = asset.status;
+        document.getElementById('asset-pinned').checked = Boolean(asset.is_pinned);
+        state.selectedColor = asset.color || 'blue';
+        state.selectedIcon = asset.icon || 'ph-folder-open';
+        deleteBtn.classList.replace('hidden', 'inline-flex');
+      } else {
+        document.getElementById('asset-modal-title').textContent = 'Tambah Aset Data Baru';
+        document.getElementById('asset-modal-header-icon').className = 'ph-bold ph-folder-plus text-lg';
+        document.getElementById('asset-form').reset();
+        document.getElementById('asset-id').value = '';
+        state.selectedColor = 'blue';
+        state.selectedIcon = 'ph-folder-open';
+        deleteBtn.classList.add('hidden');
+      }
+
+      renderColorAndIconPickers();
+      modal.classList.remove('hidden');
+    };
+
+    window.closeAssetModal = function () {
+      document.getElementById('asset-modal').classList.add('hidden');
+    };
+
+    document.getElementById('asset-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (state.currentUser?.role !== 'admin') return;
+
+      const id = document.getElementById('asset-id').value;
+      const payload = {
+        title: document.getElementById('asset-title').value.trim(),
+        url: document.getElementById('asset-url').value.trim(),
+        pic: document.getElementById('asset-pic').value.trim(),
+        description: document.getElementById('asset-description').value.trim(),
+        division: document.getElementById('asset-division').value,
+        program: document.getElementById('asset-program').value,
+        status: document.getElementById('asset-status').value,
+        is_pinned: document.getElementById('asset-pinned').checked,
+        icon: state.selectedIcon,
+        color: state.selectedColor
+      };
+
+      try {
+        if (IS_PREVIEW) {
+          let list = JSON.parse(localStorage.getItem(STORAGE_KEYS.ASSETS) || '[]');
+          if (id) {
+            list = list.map((item) => (String(item.id) === String(id) ? { ...item, ...payload } : item));
+            showToast('Perubahan aset berhasil disimpan.', 'success');
+          } else {
+            list.unshift({ id: 'ast-' + Date.now(), ...payload });
+            showToast('Aset baru berhasil ditambahkan!', 'success');
+          }
+          localStorage.setItem(STORAGE_KEYS.ASSETS, JSON.stringify(list));
+          state.assets = list;
+          closeAssetModal();
+          renderDashboard();
+        } else if (supabase) {
+          if (id) {
+            const { error } = await supabase.from('dv_assets').update(payload).eq('id', id);
+            if (error) throw error;
+            showToast('Perubahan aset berhasil disimpan ke Supabase.', 'success');
+          } else {
+            const { error } = await supabase.from('dv_assets').insert([payload]);
+            if (error) throw error;
+            showToast('Aset baru berhasil ditambahkan ke Supabase!', 'success');
+          }
+          closeAssetModal();
+          await fetchAssets();
+        }
+      } catch (err) {
+        showToast('Gagal menyimpan aset: ' + err.message, 'error');
+      }
+    });
+
+    window.togglePinAsset = async function (assetId) {
+      if (state.currentUser?.role !== 'admin') return;
+      const target = state.assets.find((a) => String(a.id) === String(assetId));
+      if (!target) return;
+      const nextPin = !target.is_pinned;
+
+      try {
+        if (IS_PREVIEW) {
+          state.assets = state.assets.map((a) =>
+            String(a.id) === String(assetId) ? { ...a, is_pinned: nextPin } : a
+          );
+          localStorage.setItem(STORAGE_KEYS.ASSETS, JSON.stringify(state.assets));
+          renderDashboard();
+        } else if (supabase) {
+          const { error } = await supabase.from('dv_assets').update({ is_pinned: nextPin }).eq('id', assetId);
+          if (error) throw error;
+          await fetchAssets();
+        }
+        showToast(nextPin ? 'Aset disematkan di atas.' : 'Sematan aset dilepas.', 'info');
+      } catch (err) {
+        showToast('Gagal mengubah sematan: ' + err.message, 'error');
+      }
+    };
+
+    window.deleteCurrentAsset = function () {
+      const id = document.getElementById('asset-id').value;
+      if (!id || state.currentUser?.role !== 'admin') return;
+
+      openConfirmModal('Hapus Aset Data?', 'Aset yang dihapus tidak dapat dikembalikan secara otomatis.', async () => {
+        try {
+          if (IS_PREVIEW) {
+            state.assets = state.assets.filter((a) => String(a.id) !== String(id));
+            localStorage.setItem(STORAGE_KEYS.ASSETS, JSON.stringify(state.assets));
+            closeAssetModal();
+            renderDashboard();
+          } else if (supabase) {
+            const { error } = await supabase.from('dv_assets').delete().eq('id', id);
+            if (error) throw error;
+            closeAssetModal();
+            await fetchAssets();
+          }
+          showToast('Aset berhasil dihapus.', 'success');
+        } catch (err) {
+          showToast('Gagal menghapus aset: ' + err.message, 'error');
+        }
+      });
+    };
+
+    // =========================================================================
+    // 9. MODAL MANAJEMEN AKUN & AKSES TIM (KHUSUS ADMIN)
+    // =========================================================================
+    window.openUsersModal = async function () {
+      if (state.currentUser?.role !== 'admin') return;
+      await fetchUsers();
+      renderUsersList();
+      document.getElementById('users-modal').classList.remove('hidden');
+    };
+
+    window.closeUsersModal = function () {
+      document.getElementById('users-modal').classList.add('hidden');
+    };
+
+    function renderUsersList() {
+      const container = document.getElementById('users-list-container');
+      document.getElementById('users-count-badge').textContent = `${state.users.length} Akun`;
+
+      if (state.users.length === 0) {
+        container.innerHTML = `<p class="text-xs text-center text-gray-400 py-6">Belum ada akun pengguna terdaftar.</p>`;
+        return;
+      }
+
+      container.innerHTML = state.users
+        .map((u) => {
+          const isRoleAdmin = u.role === 'admin';
+          return `
+            <div class="ios-input px-3.5 py-2.5 rounded-xl flex items-center justify-between gap-3">
+              <div class="flex items-center gap-2.5 min-w-0">
+                <div class="w-8 h-8 rounded-xl ${
+                  isRoleAdmin ? 'bg-dvOrange/15 text-dvOrange' : 'bg-dvBlue/15 text-dvBlue'
+                } flex items-center justify-center shrink-0">
+                  <i class="ph-fill ${isRoleAdmin ? 'ph-shield-check' : 'ph-user'} text-base"></i>
+                </div>
+                <div class="min-w-0">
+                  <div class="flex items-center gap-2">
+                    <span class="text-xs font-bold truncate">${escapeHTML(u.username)}</span>
+                    <span class="px-2 py-0.5 rounded-md text-[10px] font-bold ${
+                      isRoleAdmin ? 'bg-dvOrange/15 text-dvOrange' : 'bg-dvBlue/15 text-dvBlue'
+                    }">
+                      ${isRoleAdmin ? 'Admin' : 'Tim (Viewer)'}
+                    </span>
+                  </div>
+                  <p class="text-[11px] text-gray-400 font-mono">Sandi: ${escapeHTML(u.password)}</p>
+                </div>
+              </div>
+
+              <button type="button" onclick="deleteUserAccount('${u.id}')" title="Hapus Akun" class="w-8 h-8 rounded-lg hover:bg-red-500/15 text-gray-400 hover:text-red-500 flex items-center justify-center transition cursor-pointer">
+                <i class="ph-bold ph-trash text-sm"></i>
+              </button>
+            </div>
+          `;
+        })
+        .join('');
+    }
+
+    document.getElementById('create-user-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (state.currentUser?.role !== 'admin') return;
+
+      const username = document.getElementById('new-username').value.trim();
+      const password = document.getElementById('new-password').value.trim();
+      const role = document.getElementById('new-role').value;
+
+      if (username.length < 3 || password.length < 4) {
+        showToast('Username minimal 3 karakter dan kata sandi minimal 4 karakter.', 'error');
+        return;
+      }
+
+      if (state.users.some((u) => u.username.toLowerCase() === username.toLowerCase())) {
+        showToast('Username sudah terdaftar. Gunakan nama lain.', 'error');
+        return;
+      }
+
+      try {
+        if (IS_PREVIEW) {
+          const newUser = { id: 'u-' + Date.now(), username, password, role };
+          state.users.push(newUser);
+          localStorage.setItem(STORAGE_KEYS.USERS, JSON.stringify(state.users));
+          renderUsersList();
+        } else if (supabase) {
+          const { error } = await supabase.from('dv_users').insert([{ username, password, role }]);
+          if (error) throw error;
+          await fetchUsers();
+          renderUsersList();
+        }
+        document.getElementById('create-user-form').reset();
+        showToast(`Akun "${username}" berhasil ditambahkan.`, 'success');
+      } catch (err) {
+        showToast('Gagal menambah akun: ' + err.message, 'error');
+      }
+    });
+
+    window.deleteUserAccount = async function (userId) {
+      if (state.currentUser?.role !== 'admin') return;
+      const target = state.users.find((u) => String(u.id) === String(userId));
+      if (!target) return;
+
+      // Proteksi agar admin terakhir tidak dihapus
+      const adminCount = state.users.filter((u) => u.role === 'admin').length;
+      if (target.role === 'admin' && adminCount <= 1) {
+        showToast('Tidak dapat menghapus akun Admin terakhir!', 'error');
+        return;
+      }
+
+      try {
+        if (IS_PREVIEW) {
+          state.users = state.users.filter((u) => String(u.id) !== String(userId));
+          localStorage.setItem(STORAGE_KEYS.USERS, JSON.stringify(state.users));
+          renderUsersList();
+        } else if (supabase) {
+          const { error } = await supabase.from('dv_users').delete().eq('id', userId);
+          if (error) throw error;
+          await fetchUsers();
+          renderUsersList();
+        }
+        showToast(`Akun "${target.username}" telah dihapus.`, 'info');
+      } catch (err) {
+        showToast('Gagal menghapus akun: ' + err.message, 'error');
+      }
+    };
+
+    window.resetDefaultUsers = function () {
+      if (!IS_PREVIEW || state.currentUser?.role !== 'admin') return;
+      openConfirmModal('Reset Akun Default?', 'Daftar akun akan dikembalikan ke admin/admin123 dan tim/tim123.', () => {
+        localStorage.setItem(STORAGE_KEYS.USERS, JSON.stringify(DEFAULT_USERS));
+        state.users = [...DEFAULT_USERS];
+        renderUsersList();
+        showToast('Daftar akun dikembalikan ke pengaturan default.', 'success');
+      });
+    };
+
+    // =========================================================================
+    // 10. BACKUP & RESTORE JSON (KHUSUS ADMIN)
+    // =========================================================================
+    window.openBackupModal = function () {
+      if (state.currentUser?.role !== 'admin') return;
+      document.getElementById('backup-modal').classList.remove('hidden');
+    };
+
+    window.closeBackupModal = function () {
+      document.getElementById('backup-modal').classList.add('hidden');
+    };
+
+    window.exportAssetsJSON = function () {
+      const exportPayload = {
+        app: 'DataKD',
+        exported_at: new Date().toISOString(),
+        total: state.assets.length,
+        assets: state.assets
+      };
+      const blob = new Blob([JSON.stringify(exportPayload, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `datakd-backup-${new Date().toISOString().slice(0, 10)}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+      showToast('File backup JSON berhasil diunduh.', 'success');
+    };
+
+    window.importAssetsJSON = function (event) {
+      const file = event.target.files?.[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = async (e) => {
+        try {
+          const parsed = JSON.parse(e.target.result);
+          const importedList = Array.isArray(parsed) ? parsed : parsed.assets;
+          if (!Array.isArray(importedList)) {
+            throw new Error('Format file JSON tidak valid.');
+          }
+
+          if (IS_PREVIEW) {
+            localStorage.setItem(STORAGE_KEYS.ASSETS, JSON.stringify(importedList));
+            state.assets = importedList;
+            renderDashboard();
+          } else if (supabase) {
+            const sanitized = importedList.map(({ id, created_at, ...rest }) => rest);
+            const { error } = await supabase.from('dv_assets').insert(sanitized);
+            if (error) throw error;
+            await fetchAssets();
+          }
+
+          closeBackupModal();
+          showToast(`Berhasil memulihkan ${importedList.length} aset data!`, 'success');
+        } catch (err) {
+          showToast('Gagal memulihkan JSON: ' + err.message, 'error');
+        } finally {
+          event.target.value = '';
+        }
+      };
+      reader.readAsText(file);
+    };
+
+    // =========================================================================
+    // 11. CUSTOM CONFIRM MODAL & TOAST SYSTEM
+    // =========================================================================
+    function openConfirmModal(title, message, onConfirm) {
+      document.getElementById('confirm-title').textContent = title;
+      document.getElementById('confirm-message').textContent = message;
+      state.confirmCallback = onConfirm;
+      document.getElementById('confirm-modal').classList.remove('hidden');
+    }
+
+    window.closeConfirmModal = function () {
+      document.getElementById('confirm-modal').classList.add('hidden');
+      state.confirmCallback = null;
+    };
+
+    document.getElementById('confirm-yes-btn').addEventListener('click', async () => {
+      if (typeof state.confirmCallback === 'function') {
+        await state.confirmCallback();
+      }
+      closeConfirmModal();
+    });
+
+    function showToast(message, type = 'info') {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+
+      const iconMap = {
+        success: '<i class="ph-fill ph-check-circle text-emerald-500 text-lg"></i>',
+        error: '<i class="ph-fill ph-warning-circle text-red-500 text-lg"></i>',
+        info: '<i class="ph-fill ph-info text-dvBlue text-lg"></i>'
+      };
+
+      toast.className = 'ios-glass animate-modal-in pointer-events-auto px-4 py-3 rounded-2xl shadow-xl flex items-center gap-2.5 text-xs font-semibold max-w-xs';
+      toast.innerHTML = `${iconMap[type] || iconMap.info}<span>${escapeHTML(message)}</span>`;
+      container.appendChild(toast);
+
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateY(8px)';
+        toast.style.transition = 'all 0.25s ease';
+        setTimeout(() => toast.remove(), 260);
+      }, 3000);
+    }
+
+    // Boot Application
+    bootstrapApp();
+  </script>
+</body>
+</html>
